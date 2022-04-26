@@ -32,4 +32,4 @@ const donorSchema = mongoose.Schema(
     { timestamps: true }
 );
 
-module.exports = donorSchema;
+module.exports = mongoose.model("Donor", donorSchema);
