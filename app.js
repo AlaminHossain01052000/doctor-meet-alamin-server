@@ -1,9 +1,9 @@
-const express = require('express');
-const errorMiddleware = require('./middleware/error')
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
+const express = require("express");
+const errorMiddleware = require("./middleware/error");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
-const cors = require("cors")
+const cors = require("cors");
 
 const app = express();
 
@@ -20,8 +20,8 @@ const order = require("./routes/orderRoute");
 const donor = require("./routes/donorRoute");
 const appointment = require("./routes/appointmentRoute");
 const doctor = require("./routes/doctorRoute");
+const review = require("./routes/reviewRoute");
 // const payment = require("./routes/paymentRoute");
-
 
 app.use("/api/v1", product);
 app.use("/api/v1", user);
@@ -29,12 +29,12 @@ app.use("/api/v1", order);
 app.use("/api/v1", donor);
 app.use("/api/v1", doctor);
 app.use("/api/v1", appointment);
+app.use("/api/v1", review);
 // app.use("/api/v1", payment);
-
 
 // error handler middleware
 app.use(errorMiddleware);
 
-app.get("/", (req, res) => res.send("hello from server"))
+app.get("/", (req, res) => res.send("hello from server"));
 
 module.exports = app;
