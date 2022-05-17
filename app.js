@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const fileUpload = require("express-fileupload");
 const cors = require("cors")
+const mongoSanitize = require('express-mongo-sanitize');
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 app.use(cors());
+app.use(mongoSanitize());
 
 //Route imports
 const product = require("./routes/productRoute");

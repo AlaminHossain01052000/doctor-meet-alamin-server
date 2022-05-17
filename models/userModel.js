@@ -20,24 +20,26 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, "Please Enter Your Password"],
-        minLength: [8, "Password should be greater than 8 characters"],
-        select: false,
+        minLength: [6, "Password should be greater than 8 characters"],
     },
-    avatar: {
-        public_id: String,
-        url: String
-        //   public_id: {
-        //     type: String,
-        //     required: true,
-        //   },
-        //   url: {
-        //     type: String,
-        //     required: true,
-        //   },
-    },
+    image: String,
+    // image: {
+    //     // public_id: String,
+    //     type: String,
+    //     required: [true, "Please Enter Your Avatar Link"]
+    //     // public_id: {
+    //     //     type: String,
+    //     //     required: true,
+    //     // },
+    //     // url: {
+    //     //     type: String,
+    //     //     required: true,
+    //     // },
+    // },
     role: {
         type: String,
-        enum: ["admin", "user"]
+        default: "user",
+        required: [true, "Please set Your roles"]
     },
     createdAt: {
         type: Date,

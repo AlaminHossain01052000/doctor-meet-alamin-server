@@ -11,6 +11,16 @@ const sendToken = (user, statusCode, res) => {
         httpOnly: true,
     };
 
+    // if (process.env.NODE_ENV === "production") {
+    //     options.secure = true;
+    // }
+    // res.cookie("jwt", token, options)
+    // res.status(statusCode).json({
+    //     success: true,
+    //     user,
+    //     token,
+    // });
+
     res.status(statusCode).cookie("token", token, options).json({
         success: true,
         user,
