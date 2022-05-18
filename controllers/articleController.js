@@ -25,8 +25,8 @@ const allArticles = catchAsyncError(async (req, res, next) => {
 
 // POST A Review
 const addArticle = catchAsyncError(async (req, res, next) => {
-    const newReview = new Articles(req.body);
-    newReview.save((err) => {
+    const newArticle = new Articles(req.body);
+    newArticle.save((err) => {
         if (err) {
             res.status(500).json({
                 error: "There was a server side error!",
