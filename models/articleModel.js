@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const articleSchema = mongoose.Schema(
     {
-        name: {
+        author: {
             type: String,
             required: true,
         },
@@ -18,7 +18,7 @@ const articleSchema = mongoose.Schema(
             type: String,
             required: true,
         },
-        content: {
+        description: {
             type: String,
             required: true,
         },
