@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const donorSchema = mongoose.Schema(
+const reviewSchema = mongoose.Schema(
     {
         name: {
             type: String,
@@ -13,23 +13,16 @@ const donorSchema = mongoose.Schema(
         img: {
             type: String,
         },
-        phone: {
-            type: String,
+        rating: {
+            type: Number,
             required: true,
         },
-        district: {
+        desc: {
             type: String,
             required: true,
-        },
-        group: {
-            type: String,
-            required: true,
-        },
-        gender: {
-            type: String,
         },
     },
     { timestamps: true }
 );
 
-module.exports = mongoose.model("Donor", donorSchema);
+module.exports = mongoose.model("Reviews", reviewSchema);

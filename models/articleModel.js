@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const donorSchema = mongoose.Schema(
+const articleSchema = mongoose.Schema(
     {
         name: {
             type: String,
@@ -12,24 +12,18 @@ const donorSchema = mongoose.Schema(
         },
         img: {
             type: String,
+            // required: true,
         },
-        phone: {
+        title: {
             type: String,
             required: true,
         },
-        district: {
+        content: {
             type: String,
             required: true,
-        },
-        group: {
-            type: String,
-            required: true,
-        },
-        gender: {
-            type: String,
         },
     },
     { timestamps: true }
 );
 
-module.exports = mongoose.model("Donor", donorSchema);
+module.exports = mongoose.model("Articles", articleSchema);

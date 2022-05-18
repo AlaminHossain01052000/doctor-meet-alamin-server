@@ -1,8 +1,12 @@
 const mongoose = require("mongoose");
 
-const donorSchema = mongoose.Schema(
+const reportSchema = mongoose.Schema(
     {
         name: {
+            type: String,
+            required: true,
+        },
+        DrName: {
             type: String,
             required: true,
         },
@@ -12,24 +16,13 @@ const donorSchema = mongoose.Schema(
         },
         img: {
             type: String,
-        },
-        phone: {
-            type: String,
             required: true,
         },
-        district: {
-            type: String,
-            required: true,
-        },
-        group: {
-            type: String,
-            required: true,
-        },
-        gender: {
+        desc: {
             type: String,
         },
     },
     { timestamps: true }
 );
 
-module.exports = mongoose.model("Donor", donorSchema);
+module.exports = mongoose.model("Report", reportSchema);
