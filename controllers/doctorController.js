@@ -26,7 +26,7 @@ const getAllDoctors = catchAsyncError(async (req, res, next) => {
         const LIMIT = rows;
         const startIndex = Number(page - 1) * LIMIT;
         const data = await DoctorsCollection.find(query)
-            .sort({ _id: -1 })
+            .sort({ review: -1 })
             .limit(LIMIT)
             .skip(startIndex);
         const total = await DoctorsCollection.find(query).count();
@@ -41,7 +41,6 @@ const getAllDoctors = catchAsyncError(async (req, res, next) => {
         });
     }
 });
-
 
 const getDoctorStats = catchAsyncError(async (req, res, next) => {
     //created by: copyright-> suresh vai
@@ -76,14 +75,14 @@ const getDoctorById = catchAsyncError(async (req, res, next) => {
         const data = await DoctorsCollection.find({ _id: req.params.id });
         res.status(200).json({
             success: true,
-            data
+            data,
         });
     } catch (err) {
         res.status(500).json({
             error: "There was a server side error!",
         });
     }
-})
+});
 
 // post doctor information
 
@@ -100,8 +99,7 @@ const addDoctor = catchAsyncError(async (req, res, next) => {
             });
         }
     });
-})
-
+});
 
 // update doctor information
 const updateDoctor = catchAsyncError(async (req, res, next) => {
@@ -125,7 +123,7 @@ const updateDoctor = catchAsyncError(async (req, res, next) => {
             }
         }
     );
-})
+});
 
 // DELETE Doctor information
 const deleteDoctor = catchAsyncError(async (req, res, next) => {
@@ -140,7 +138,7 @@ const deleteDoctor = catchAsyncError(async (req, res, next) => {
             });
         }
     });
-})
+});
 
 module.exports = {
     getAllDoctors,
@@ -148,5 +146,5 @@ module.exports = {
     deleteDoctor,
     addDoctor,
     getDoctorById,
-    getDoctorStats
+    getDoctorStats,
 };
