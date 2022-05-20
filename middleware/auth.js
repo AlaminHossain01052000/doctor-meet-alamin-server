@@ -8,7 +8,7 @@ exports.isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
     if (req.headers && req.headers.authorization?.startsWith("Bearer")) {
         token = req?.headers?.authorization.split(" ")[1];
     }
-
+    // console.log(token);
     if (!token) {
         return next(new ErrorHandler("Please Login to access this resource", 401));
     }
