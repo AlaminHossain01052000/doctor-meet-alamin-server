@@ -6,7 +6,8 @@ const ErrorHandler = require("../utils/errorHandler");
 
 //create product --Admin Route
 const createProduct = catchAsyncError(async (req, res, next) => {
-
+    req.body.user = req.user._id;
+    // console.log(req.body);
     const product = await Product.create(req.body);
 
     res.status(201).json({
@@ -19,7 +20,7 @@ const createProduct = catchAsyncError(async (req, res, next) => {
 // get all product
 const getAllProducts = catchAsyncError(async (req, res) => {
 
-    const resultPerPage = 6;
+    const resultPerPage = 12;
     const productCount = await Product.countDocuments();
 
     const apiFeatures = new ApiFeatures(Product.find(), req.query)

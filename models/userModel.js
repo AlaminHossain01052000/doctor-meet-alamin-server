@@ -22,7 +22,10 @@ const userSchema = new mongoose.Schema({
         required: [true, "Please Enter Your Password"],
         minLength: [6, "Password should be greater than 8 characters"],
     },
-    image: String,
+    image: {
+        type: String,
+        default: "avatar"
+    },
     // image: {
     //     // public_id: String,
     //     type: String,
@@ -39,15 +42,23 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         default: "user",
-        required: [true, "Please set Your roles"]
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now,
+        enum: {
+            values: ["user", "doctor", "moderator", "admin"],
+            message: "User must required specified role.",
+        }
     },
 
     resetPasswordToken: String,
     resetPasswordExpire: Date,
+}, {
+    timestamps: true,
+    // toJSON: {
+    //     transform: (doc, ret) => {
+    //         delete ret.password;
+    //         delete ret.__v;
+    //         return ret;
+    //     }
+    // }
 });
 
 userSchema.pre("save", async function (next) {

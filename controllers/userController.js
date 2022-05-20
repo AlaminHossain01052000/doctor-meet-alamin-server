@@ -17,7 +17,7 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
     //     crop: "scale"
     // })
 
-    const { name, email, password, image } = req.body;
+    const { name, email, password, image, role } = req.body;
 
 
     const user = await User.create({
@@ -25,6 +25,7 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
         email,
         password,
         image,
+        role
     });
 
     //generate token
@@ -60,10 +61,10 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
 
 exports.logout = catchAsyncError(async (req, res, next) => {
 
-    res.cookie("token", null, {
-        expires: new Date(Date.now()),
-        httpOnly: true
-    });
+    // res.cookie("token", null, {
+    //     expires: new Date(Date.now()),
+    //     httpOnly: true
+    // });
 
     res.status(200).json({
         success: true,
@@ -149,8 +150,10 @@ exports.resetPassword = catchAsyncError(async (req, res, next) => {
 
 // Get User Detail
 exports.getUserDetails = catchAsyncError(async (req, res, next) => {
+    // console.log('get me hit');
+    // console.log(req.user);
     const user = await User.findById(req.user.id);
-
+    // console.log(user.name);
     res.status(200).json({
         success: true,
         user,
