@@ -101,6 +101,15 @@ const doctorSchema = mongoose.Schema(
                 patientId: {
                     type: String,
                 },
+                desc: {
+                    type: String,
+                },
+                review: {
+                    type: String,
+                },
+                status: {
+                    type: Boolean,
+                },
             },
         ],
     },
