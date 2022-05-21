@@ -148,9 +148,11 @@ const addReview = catchAsyncError(async (req, res, next) => {
 });
 
 // post doctor information
-
 const addDoctor = catchAsyncError(async (req, res, next) => {
-    const newDoctor = new DoctorsCollection(req.body);
+    const data = req.body;
+    data["approved"] = false;
+    const newDoctor = new DoctorsCollection(data);
+
     newDoctor.save((err) => {
         if (err) {
             res.status(500).json({
