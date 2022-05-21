@@ -8,7 +8,7 @@ const doctorSchema = mongoose.Schema(
         },
         username: {
             type: String,
-            required: true,
+            // required: true,
         },
         email: {
             type: String,
@@ -24,7 +24,7 @@ const doctorSchema = mongoose.Schema(
         },
         visit: {
             type: Number,
-            required: true,
+            // required: true,
         },
         review: {
             type: Number,
@@ -65,12 +65,12 @@ const doctorSchema = mongoose.Schema(
         },
         free: {
             type: Boolean,
-            required: true,
+            // required: true,
         },
         appointmentDay: [
             {
                 type: String,
-                required: true,
+                // required: true,
             },
         ],
         phone: {
@@ -112,6 +112,9 @@ const doctorSchema = mongoose.Schema(
                 },
             },
         ],
+        approved: {
+            type: Boolean,
+        },
     },
     { timestamps: true }
 );
