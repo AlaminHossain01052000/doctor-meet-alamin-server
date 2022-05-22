@@ -9,6 +9,7 @@ const {
     addReport,
     deleteReportById,
     addReview,
+    addUserReview,
 } = require("../controllers/doctorController");
 const router = express.Router();
 
@@ -25,5 +26,7 @@ router.route("/doctors/:id").put(updateDoctor).delete(deleteDoctor);
 router.route("/report/:id").put(addReport);
 router.route("/report/:idr/:idd").delete(deleteReportById);
 router.route("/reportReview/:idr/:idd").put(addReview);
+
+router.route("/UserReview/single/:id").put(addUserReview);
 
 module.exports = router;
