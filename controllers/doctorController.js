@@ -145,6 +145,32 @@ const updateDoctor = catchAsyncError(async (req, res, next) => {
     );
 });
 
+const addUserReview = catchAsyncError(async (req, res, next) => {
+    const review = req.body;
+    const data = await DoctorsCollection.find({ _id: req.params.id });
+    const reviews = data[0].UserReview;
+    const newReviews = [...reviews, review];
+    const result = DoctorsCollection.findByIdAndUpdate(
+        { _id: req.params.id },
+        { UserReview: newReviews },
+        {
+            new: true,
+            useFindAndModify: false,
+        },
+        (err) => {
+            if (err) {
+                res.status(500).json({
+                    error: "There was a server side error!",
+                });
+            } else {
+                res.status(200).json({
+                    message: "Doctor was updated successfully!",
+                });
+            }
+        }
+    );
+});
+
 // DELETE Doctor information
 const deleteDoctor = catchAsyncError(async (req, res, next) => {
     DoctorsCollection.deleteOne({ _id: req.params.id }, (err) => {
@@ -167,5 +193,6 @@ module.exports = {
     addDoctor,
     getDoctorById,
     getDoctorStats,
+    addUserReview,
     getDoctorByEmail,
 };
