@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { ObjectId } = require("mongodb");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const DoctorsCollection = require("../models/doctorModel");
+const UsersCollection = require("../models/userModel");
 const router = express.Router();
 const ApiFeatures = require("../utils/apiFeatures");
 const ErrorHandler = require("../utils/errorHandler");
@@ -218,6 +219,21 @@ const addReport = catchAsyncError(async (req, res, next) => {
         {
             new: true,
             useFindAndModify: false,
+        }
+    );
+
+    //send report to patients
+    const pData = await UsersCollection.find({ _id: report.patientId });
+
+    const preports = pData[0].reports;
+    const pnewReports = [...preports, report];
+
+    const presult = UsersCollection.findByIdAndUpdate(
+        { _id: report.patientId },
+        { reports: pnewReports },
+        {
+            new: true,
+            useFindAndModify: false,
         },
         (err) => {
             if (err) {
@@ -226,7 +242,7 @@ const addReport = catchAsyncError(async (req, res, next) => {
                 });
             } else {
                 res.status(200).json({
-                    message: "Doctor was updated successfully!",
+                    message: "Report Forwarded successfully!",
                 });
             }
         }
