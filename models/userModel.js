@@ -51,25 +51,6 @@ const userSchema = new mongoose.Schema(
 
         resetPasswordToken: String,
         resetPasswordExpire: Date,
-        reports: [
-            {
-                file: {
-                    type: String,
-                },
-                patientId: {
-                    type: String,
-                },
-                desc: {
-                    type: String,
-                },
-                review: {
-                    type: String,
-                },
-                status: {
-                    type: Boolean,
-                },
-            },
-        ],
     },
     {
         timestamps: true,
