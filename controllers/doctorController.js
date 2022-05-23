@@ -124,25 +124,22 @@ const addDoctor = catchAsyncError(async (req, res, next) => {
 // update doctor information
 const updateDoctor = catchAsyncError(async (req, res, next) => {
     const data = req.body;
-    const result = DoctorsCollection.findByIdAndUpdate(
-        { _id: req.params.id },
+    await DoctorsCollection.findOneAndUpdate(
+        { email: req.params.email },
         data,
         {
             new: true,
             useFindAndModify: false,
-        },
-        (err) => {
-            if (err) {
-                res.status(500).json({
-                    error: "There was a server side error!",
-                });
-            } else {
-                res.status(200).json({
-                    message: "Doctor was updated successfully!",
-                });
-            }
         }
     );
+    await UsersCollection.findOneAndUpdate(
+        { email: req.params.email },
+        { role: "doctor" }
+    );
+
+    res.status(200).json({
+        message: "Doctor was updated successfully!",
+    });
 });
 
 const addUserReview = catchAsyncError(async (req, res, next) => {

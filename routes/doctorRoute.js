@@ -20,7 +20,7 @@ router.route("/doctors/statistics").get(getDoctorStats);
 router.route("/doctors/single/:id").get(getDoctorById);
 router.route("/doctors/email/:email").get(getDoctorByEmail);
 
-router.route("/doctors/:id").put(updateDoctor).delete(deleteDoctor);
+router.route("/doctors/:email").put(updateDoctor).delete(deleteDoctor);
 
 router.route("/UserReview/single/:id").put(addUserReview);
 
