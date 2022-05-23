@@ -118,7 +118,7 @@ const doctorSchema = mongoose.Schema(
                     type:String,
                 },
                 img:{
-
+                    type:String,
                 },
                 email:{
                     type:String,
