@@ -51,7 +51,7 @@ const productSchema = mongoose.Schema({
     },
     reviews: [
         {
-            user: {
+            User: {
                 type: mongoose.Schema.ObjectId,
                 ref: "User",
                 required: true,
@@ -59,6 +59,9 @@ const productSchema = mongoose.Schema({
             name: {
                 type: String,
                 required: true,
+            },
+            email:{
+                type:String,
             },
             rating: {
                 type: Number,
@@ -68,6 +71,10 @@ const productSchema = mongoose.Schema({
                 type: String,
                 required: true,
             },
+            img:{
+                type:String,
+                required:true
+            }
         },
     ],
     user: {
