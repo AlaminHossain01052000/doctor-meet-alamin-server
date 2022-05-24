@@ -221,6 +221,7 @@ exports.getAllUser = catchAsyncError(async (req, res, next) => {
   });
 });
 
+
 // Get single user (admin)
 exports.getSingleUser = catchAsyncError(async (req, res, next) => {
   const user = await User.findById(req.params.id);
@@ -236,6 +237,7 @@ exports.getSingleUser = catchAsyncError(async (req, res, next) => {
     user,
   });
 });
+
 
 exports.getUserByRole = catchAsyncError(async (req, res, next) => {
   const user = await User.find({ role: req.query.role });
