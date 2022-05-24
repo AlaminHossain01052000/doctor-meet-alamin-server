@@ -7,6 +7,7 @@ const UsersCollection = require("../models/userModel");
 const router = express.Router();
 const ApiFeatures = require("../utils/apiFeatures");
 const ErrorHandler = require("../utils/errorHandler");
+const User = require("../models/userModel");
 
 // GET All by doctor
 const getAllDoctors = catchAsyncError(async (req, res, next) => {
@@ -106,9 +107,7 @@ const getDoctorByEmail = catchAsyncError(async (req, res, next) => {
 const addDoctor = catchAsyncError(async (req, res, next) => {
     const data = req.body;
     data["approved"] = false;
-    // console.log(data);
     const newDoctor = new DoctorsCollection(data);
-    console.log(newDoctor);
 
     newDoctor.save((err) => {
         if (err) {

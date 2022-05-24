@@ -110,6 +110,25 @@ const doctorSchema = mongoose.Schema(
                 },
             },
         ],
+        UserReview:[
+            {
+                name:{
+                    type:String,
+                },
+                img:{
+                    type:String,
+                },
+                email:{
+                    type:String,
+                },
+                rating:{
+                    type:Number,
+                },
+                feedback:{
+                    type:String,
+                },      
+            }
+        ],
         approved: {
             type: Boolean,
         },
