@@ -11,293 +11,209 @@ const User = require("../models/userModel");
 
 // GET All by doctor
 const getAllDoctors = catchAsyncError(async (req, res, next) => {
-  const { specialist, gender, page, rows } = req.query;
-  // console.log(specialist, gender, page);
+    const { specialist, gender, page, rows } = req.query;
+    // console.log(specialist, gender, page);
 
-  let query = {};
-  if (specialist === "All" && gender === "All") {
-    query = {};
-  } else if (specialist === "All") {
-    query = { gender };
-  } else if (gender === "All") {
-    query = { specialist };
-  } else {
-    query = { specialist, gender };
-  }
-  // console.log(query);
-  try {
-    const LIMIT = rows;
-    const startIndex = Number(page - 1) * LIMIT;
-    const data = await DoctorsCollection.find(query)
-      .sort({ review: -1 })
-      .limit(LIMIT)
-      .skip(startIndex);
-    const total = await DoctorsCollection.find(query).count();
-    res.status(200).json({
-      result: data,
-      total: total,
-      message: "Success",
-    });
-  } catch (err) {
-    res.status(500).json({
-      error: "Donor not found.",
-    });
-  }
+    let query = {};
+    if (specialist === "All" && gender === "All") {
+        query = {};
+    } else if (specialist === "All") {
+        query = { gender };
+    } else if (gender === "All") {
+        query = { specialist };
+    } else {
+        query = { specialist, gender };
+    }
+    // console.log(query);
+    try {
+        const LIMIT = rows;
+        const startIndex = Number(page - 1) * LIMIT;
+        const data = await DoctorsCollection.find(query)
+            .sort({ review: -1 })
+            .limit(LIMIT)
+            .skip(startIndex);
+        const total = await DoctorsCollection.find(query).count();
+        res.status(200).json({
+            result: data,
+            total: total,
+            message: "Success",
+        });
+    } catch (err) {
+        res.status(500).json({
+            error: "Donor not found.",
+        });
+    }
 });
 
 const getDoctorStats = catchAsyncError(async (req, res, next) => {
-  //created by: copyright-> suresh vai
-  try {
-    const specialistData = await DoctorsCollection.aggregate([
-      { $group: { _id: "$specialist", count: { $sum: 1 } } },
-      { $sort: { count: 1 } },
-    ]);
-    const experienceData = await DoctorsCollection.aggregate([
-      { $group: { _id: "$experience", count: { $sum: 1 } } },
-      { $sort: { count: 1 } },
-    ]);
-    const genderData = await DoctorsCollection.aggregate([
-      { $group: { _id: "$gender", count: { $sum: 1 } } },
-      { $sort: { count: 1 } },
-    ]);
-    const data = { specialistData, experienceData, genderData };
+    //created by: copyright-> suresh vai
+    try {
+        const specialistData = await DoctorsCollection.aggregate([
+            { $group: { _id: "$specialist", count: { $sum: 1 } } },
+            { $sort: { count: 1 } },
+        ]);
+        const experienceData = await DoctorsCollection.aggregate([
+            { $group: { _id: "$experience", count: { $sum: 1 } } },
+            { $sort: { count: 1 } },
+        ]);
+        const genderData = await DoctorsCollection.aggregate([
+            { $group: { _id: "$gender", count: { $sum: 1 } } },
+            { $sort: { count: 1 } },
+        ]);
+        const data = { specialistData, experienceData, genderData };
 
-    res.status(200).json({
-      result: data,
-      message: "Success",
-    });
-  } catch (err) {
-    res.status(500).json({
-      error: "There was a server side error!",
-    });
-  }
+        res.status(200).json({
+            result: data,
+            message: "Success",
+        });
+    } catch (err) {
+        res.status(500).json({
+            error: "There was a server side error!",
+        });
+    }
 });
 
 // GET specific doctor by ID
 const getDoctorById = catchAsyncError(async (req, res, next) => {
-  try {
-    const data = await DoctorsCollection.find({ _id: req.params.id });
-    res.status(200).json({
-      success: true,
-      data,
-    });
-  } catch (err) {
-    res.status(500).json({
-      error: "There was a server side error!",
-    });
-  }
+    try {
+        const data = await DoctorsCollection.find({ _id: req.params.id });
+        res.status(200).json({
+            success: true,
+            data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            error: "There was a server side error!",
+        });
+    }
 });
 
 // GET specific doctor by email
 const getDoctorByEmail = catchAsyncError(async (req, res, next) => {
-  try {
-    const data = await DoctorsCollection.find({ email: req.params.email });
-    res.status(200).json({
-      success: true,
-      data,
-    });
-  } catch (err) {
-    res.status(500).json({
-      error: "There was a server side error!",
-    });
-  }
-});
-
-//delete a report
-const deleteReportById = catchAsyncError(async (req, res, next) => {
-  const result = await DoctorsCollection.find({ _id: req.params.idd });
-  const newReports = result[0].reports.filter(
-    (report) => ObjectId(report._id).valueOf() !== req.params.idr
-  );
-
-  DoctorsCollection.findByIdAndUpdate(
-    { _id: req.params.idd },
-    { reports: newReports },
-    {
-      new: true,
-      useFindAndModify: false,
-    },
-    (err) => {
-      if (err) {
-        res.status(500).json({
-          error: "There was a server side error!",
-        });
-      } else {
+    try {
+        const data = await DoctorsCollection.find({ email: req.params.email });
         res.status(200).json({
-          message: "Report deleted successfully!",
+            success: true,
+            data,
         });
-      }
-    }
-  );
-});
-
-//add review
-const addReview = catchAsyncError(async (req, res, next) => {
-  const report = req.body;
-
-  const data = await DoctorsCollection.find({ email: req.params.demail });
-
-  const newReports = data[0].reports.filter(
-    (report) => ObjectId(report._id).valueOf() !== req.params.idr
-  );
-  newReports.push(report);
-
-  // console.log(newReports);
-  const result = DoctorsCollection.findOneAndUpdate(
-    { email: req.params.demail },
-    { reports: newReports },
-    {
-      new: true,
-      useFindAndModify: false,
-    },
-    (err) => {
-      if (err) {
+    } catch (err) {
         res.status(500).json({
-          error: "There was a server side error!",
+            error: "There was a server side error!",
         });
-      } else {
-        res.status(200).json({
-          message: "Doctor was updated successfully!",
-        });
-      }
     }
-  );
 });
 
 // post doctor information
 const addDoctor = catchAsyncError(async (req, res, next) => {
-  const data = req.body;
-  data["approved"] = false;
-  const newDoctor = new DoctorsCollection(data);
+    const data = req.body;
+    data["approved"] = false;
+    const newDoctor = new DoctorsCollection(data);
 
-  newDoctor.save((err) => {
-    if (err) {
-      res.status(500).json({
-        error: "There was a server side error!",
-      });
-    } else {
-      res.status(200).json({
-        message: "Donor information was inserted successfully!",
-      });
-    }
-  });
+    newDoctor.save((err) => {
+        if (err) {
+            res.status(500).json({
+                error: "There was a server side error!",
+            });
+        } else {
+            res.status(200).json({
+                message: "Donor information was inserted successfully!",
+            });
+        }
+    });
 });
 
 // update doctor information
 const updateDoctor = catchAsyncError(async (req, res, next) => {
-const data = req.body;
-await DoctorsCollection.findOneAndUpdate(
-    { email: req.params.email },
-    data,
-    {
-        new: true,
-        useFindAndModify: false,
-    }
-);
-await UsersCollection.findOneAndUpdate(
-    { email: req.params.email },
-    { role: "doctor" }
-);
-
-res.status(200).json({
-    message: "Doctor was updated successfully!",
+    const data = req.body;
+    const result = DoctorsCollection.findByIdAndUpdate(
+        { _id: req.params.id },
+        data,
+        {
+            new: true,
+            useFindAndModify: false,
+        },
+        (err) => {
+            if (err) {
+                res.status(500).json({
+                    error: "There was a server side error!",
+                });
+            } else {
+                res.status(200).json({
+                    message: "Doctor was updated successfully!",
+                });
+            }
+        }
+    );
 });
-});
 
-//post report
-const addReport = catchAsyncError(async (req, res, next) => {
-  const report = req.body;
-  const data = await DoctorsCollection.find({ _id: req.params.id });
-  const reports = data[0].reports;
-  const newReports = [...reports, report];
-  // console.log(newReports);
-  const result = DoctorsCollection.findByIdAndUpdate(
-    { _id: req.params.id },
-    { reports: newReports },
-    {
-      new: true,
-      useFindAndModify: false,
-    }
-  );
+const approveDoctor = catchAsyncError(async (req, res, next) => {
+    const data = req.body;
+    // console.log(data);
 
-  //send report to patients
-  const pData = await UsersCollection.find({ _id: report.patientId });
+    const result2 = await UsersCollection.findOneAndUpdate(
+        { email: req.params.email },
+        { role: "doctor" }
+    );
 
-  const preports = pData[0].reports;
-  const pnewReports = [...preports, report];
+    const result1 = await DoctorsCollection.findOneAndUpdate(
+        { email: req.params.email },
+        data
+    );
 
-  const presult = UsersCollection.findByIdAndUpdate(
-    { _id: report.patientId },
-    { reports: pnewReports },
-    {
-      new: true,
-      useFindAndModify: false,
-    },
-    (err) => {
-      if (err) {
-        res.status(500).json({
-          error: "There was a server side error!",
-        });
-      } else {
-        res.status(200).json({
-          message: "Report Forwarded successfully!",
-        });
-      }
-    }
-  );
+    res.status(200).json({
+        message: "Doctor approval done successfully!",
+    });
 });
 
 const addUserReview = catchAsyncError(async (req, res, next) => {
-  const review = req.body;
-  const data = await DoctorsCollection.find({ _id: req.params.id });
-  const reviews = data[0].UserReview;
-  const newReviews = [...reviews, review];
-  const result = DoctorsCollection.findByIdAndUpdate(
-    { _id: req.params.id },
-    { UserReview: newReviews },
-    {
-      new: true,
-      useFindAndModify: false,
-    },
-    (err) => {
-      if (err) {
-        res.status(500).json({
-          error: "There was a server side error!",
-        });
-      } else {
-        res.status(200).json({
-          message: "Doctor was updated successfully!",
-        });
-      }
-    }
-  );
+    const review = req.body;
+    const data = await DoctorsCollection.find({ _id: req.params.id });
+    const reviews = data[0].UserReview;
+    const newReviews = [...reviews, review];
+    const result = DoctorsCollection.findByIdAndUpdate(
+        { _id: req.params.id },
+        { UserReview: newReviews },
+        {
+            new: true,
+            useFindAndModify: false,
+        },
+        (err) => {
+            if (err) {
+                res.status(500).json({
+                    error: "There was a server side error!",
+                });
+            } else {
+                res.status(200).json({
+                    message: "Doctor was updated successfully!",
+                });
+            }
+        }
+    );
 });
 
 // DELETE Doctor information
 const deleteDoctor = catchAsyncError(async (req, res, next) => {
-  DoctorsCollection.deleteOne({ _id: req.params.id }, (err) => {
-    if (err) {
-      res.status(500).json({
-        error: "There was a server side error!",
-      });
-    } else {
-      res.status(200).json({
-        message: "Donor was deleted successfully!",
-      });
-    }
-  });
+    DoctorsCollection.deleteOne({ _id: req.params.id }, (err) => {
+        if (err) {
+            res.status(500).json({
+                error: "There was a server side error!",
+            });
+        } else {
+            res.status(200).json({
+                message: "Donor was deleted successfully!",
+            });
+        }
+    });
 });
 
 module.exports = {
-  getAllDoctors,
-  updateDoctor,
-  deleteDoctor,
-  addDoctor,
-  getDoctorById,
-  getDoctorStats,
-  addReport,
-  deleteReportById,
-  addReview,
-  addUserReview,
-  getDoctorByEmail,
+    getAllDoctors,
+    updateDoctor,
+    deleteDoctor,
+    addDoctor,
+    getDoctorById,
+    getDoctorStats,
+    addUserReview,
+    getDoctorByEmail,
+    approveDoctor,
 };

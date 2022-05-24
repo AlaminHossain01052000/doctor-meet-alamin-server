@@ -4,7 +4,7 @@ const doctorSchema = mongoose.Schema(
     {
         name: {
             type: String,
-            required: true,
+            // required: true,
         },
         username: {
             type: String,
@@ -12,15 +12,15 @@ const doctorSchema = mongoose.Schema(
         },
         email: {
             type: String,
-            required: true,
+            // required: true,
         },
         img: {
             type: String,
-            required: true,
+            // required: true,
         },
         specialist: {
             type: String,
-            required: true,
+            // required: true,
         },
         visit: {
             type: Number,
@@ -57,11 +57,11 @@ const doctorSchema = mongoose.Schema(
         ],
         experience: {
             type: Number,
-            required: true,
+            // required: true,
         },
         gender: {
             type: String,
-            required: true,
+            // required: true,
         },
         free: {
             type: Boolean,
@@ -75,7 +75,7 @@ const doctorSchema = mongoose.Schema(
         ],
         phone: {
             type: String,
-            required: true,
+            // required: true,
         },
         website: {
             type: String,
