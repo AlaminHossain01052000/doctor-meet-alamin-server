@@ -149,7 +149,7 @@ const updateDoctor = catchAsyncError(async (req, res, next) => {
 
 const approveDoctor = catchAsyncError(async (req, res, next) => {
     const data = req.body;
-    console.log(data);
+    // console.log(data);
 
     const result2 = await UsersCollection.findOneAndUpdate(
         { email: req.params.email },
