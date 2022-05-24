@@ -93,22 +93,20 @@ const doctorSchema = mongoose.Schema(
                 },
             },
         ],
-        reports: [
+        UserReview: [
             {
-                file: {
+                name: {
                     type: String,
                 },
-                patientId: {
+                img: {},
+                email: {
                     type: String,
                 },
-                desc: {
-                    type: String,
+                rating: {
+                    type: Number,
                 },
-                review: {
+                feedback: {
                     type: String,
-                },
-                status: {
-                    type: Boolean,
                 },
             },
         ],

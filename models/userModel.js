@@ -25,7 +25,6 @@ const userSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: "avatar",
     },
     // image: {
     //     // public_id: String,
