@@ -11,7 +11,6 @@ const ErrorHandler = require("../utils/errorHandler");
 const getAllAppointment = catchAsyncError(async (req, res, next) => {
     Appointment.find({})
         .select({
-            _id: 0,
             __v: 0,
             date: 0,
         })
@@ -134,5 +133,5 @@ module.exports = {
     updateAppointment,
     deleteAppointment,
     addAnAppointment,
-    addMultipleAppointment
+    addMultipleAppointment,
 };

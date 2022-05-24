@@ -5,6 +5,7 @@ const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
 const cloudinary = require("cloudinary");
+const bcrypt = require("bcryptjs");
 
 
 //Register user
@@ -19,6 +20,27 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
 
     const { name, email, password, image, role } = req.body;
 
+    // try {
+
+    //     await sendEmail({
+    //         email: email,
+    //         subject: `Doctor Meet registration confirmation`,
+    //         message: "from Doctor Meet",
+    //     });
+
+    //     res.status(200).json({
+    //         success: true,
+    //         message: `Email sent to ${email} successfully`,
+    //     });
+    // } catch (error) {
+    //     user.resetPasswordToken = undefined;
+    //     user.resetPasswordExpire = undefined;
+    //     console.log(error);
+    //     // await user.save({ validateBeforeSave: false });
+
+    //     // return next(new ErrorHander(error.message, 500));
+    // }
+
 
     const user = await User.create({
         name,
@@ -28,7 +50,7 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
         role
     });
 
-    //generate token
+    // generate token
     sendToken(user, 200, res)
 
 });
@@ -39,24 +61,27 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
 
     const { email, password } = req.body;
 
-    //check: if user not giving email or password
+    // checking if user has given password and email both
+
     if (!email || !password) {
-        return next(new ErrorHandler("Please enter email and password", 400))
+        return next(new ErrorHandler("Please Enter Email & Password", 400));
     }
 
     const user = await User.findOne({ email }).select("+password");
-    //("+password") as because we are not selecting password field in user schema.
+
     if (!user) {
-        return next(new ErrorHandler("Invalid email or password", 401))
+        return next(new ErrorHandler("Invalid email or password", 401));
     }
 
-    const isPasswordMatched = user.comparePassword(password)
+    const isPasswordMatched = await user.comparePassword(password);
+
+    // console.log(isPasswordMatched);
+
     if (!isPasswordMatched) {
-        return next(new ErrorHandler("Invalid email or password", 401))
+        return next(new ErrorHandler("Invalid email or password", 401));
     }
 
-    //generate token
-    sendToken(user, 200, res)
+    sendToken(user, 200, res);
 });
 
 exports.logout = catchAsyncError(async (req, res, next) => {
@@ -66,7 +91,7 @@ exports.logout = catchAsyncError(async (req, res, next) => {
     //     httpOnly: true
     // });
 
-    res.status(200).json({
+    res.status(200).cookie("token", null).json({
         success: true,
         message: "Logged out!"
     })
@@ -78,7 +103,7 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-        return next(new ErrorHandler("User not found", 404));
+        return next(new ErrorHander("User not found", 404));
     }
 
     // Get ResetPassword Token
@@ -86,16 +111,17 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const resetPasswordUrl = `${req.protocol}://${req.get(
-        "host"
-    )}/password/reset/${resetToken}`;
+    const resetPasswordUrl = `${req.protocol}://localhost:3000/password/reset/${resetToken}`;
+    //   const resetPasswordUrl = `${req.protocol}://${req.get(
+    //     "host"
+    //   )}/password/reset/${resetToken}`;
 
     const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`;
 
     try {
         await sendEmail({
             email: user.email,
-            subject: `Doctors Meet Password Recovery`,
+            subject: `DoctorMeet Password Recovery`,
             message,
         });
 
@@ -115,6 +141,7 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
 
 // Reset Password
 exports.resetPassword = catchAsyncError(async (req, res, next) => {
+    console.log("reset password hit");
     // creating token hash
     const resetPasswordToken = crypto
         .createHash("sha256")
@@ -143,6 +170,7 @@ exports.resetPassword = catchAsyncError(async (req, res, next) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 
+    console.log('reset success');
     await user.save();
 
     sendToken(user, 200, res);
@@ -215,6 +243,7 @@ exports.updateProfile = catchAsyncError(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
+        data: user,
     });
 });
 

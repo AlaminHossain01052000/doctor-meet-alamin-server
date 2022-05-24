@@ -23,6 +23,8 @@ const getAllProducts = catchAsyncError(async (req, res) => {
     const resultPerPage = 12;
     const productCount = await Product.countDocuments();
 
+    // console.log(req.query)
+
     const apiFeatures = new ApiFeatures(Product.find(), req.query)
         .search()
         .filter()

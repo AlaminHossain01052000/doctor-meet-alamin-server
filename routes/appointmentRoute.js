@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllAppointment, addAnAppointment, getAppointmentById, deleteAppointment, updateAppointment } = require('../controllers/appointmentController');
+const { getAllAppointment, addAnAppointment, getAppointmentById, deleteAppointment, updateAppointment, getDoctorAppointments } = require('../controllers/appointmentController');
 const router = express.Router();
 
 router.route("/appointment").get(getAllAppointment);
