@@ -106,7 +106,9 @@ const getDoctorByEmail = catchAsyncError(async (req, res, next) => {
 const addDoctor = catchAsyncError(async (req, res, next) => {
     const data = req.body;
     data["approved"] = false;
+    // console.log(data);
     const newDoctor = new DoctorsCollection(data);
+    console.log(newDoctor);
 
     newDoctor.save((err) => {
         if (err) {
@@ -124,21 +126,43 @@ const addDoctor = catchAsyncError(async (req, res, next) => {
 // update doctor information
 const updateDoctor = catchAsyncError(async (req, res, next) => {
     const data = req.body;
-    await DoctorsCollection.findOneAndUpdate(
-        { email: req.params.email },
+    const result = DoctorsCollection.findByIdAndUpdate(
+        { _id: req.params.id },
         data,
         {
             new: true,
             useFindAndModify: false,
+        },
+        (err) => {
+            if (err) {
+                res.status(500).json({
+                    error: "There was a server side error!",
+                });
+            } else {
+                res.status(200).json({
+                    message: "Doctor was updated successfully!",
+                });
+            }
         }
     );
-    await UsersCollection.findOneAndUpdate(
+});
+
+const approveDoctor = catchAsyncError(async (req, res, next) => {
+    const data = req.body;
+    console.log(data);
+
+    const result2 = await UsersCollection.findOneAndUpdate(
         { email: req.params.email },
         { role: "doctor" }
     );
 
+    const result1 = await DoctorsCollection.findOneAndUpdate(
+        { email: req.params.email },
+        data
+    );
+
     res.status(200).json({
-        message: "Doctor was updated successfully!",
+        message: "Doctor approval done successfully!",
     });
 });
 
@@ -192,4 +216,5 @@ module.exports = {
     getDoctorStats,
     addUserReview,
     getDoctorByEmail,
+    approveDoctor,
 };
