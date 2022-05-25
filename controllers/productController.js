@@ -1,8 +1,7 @@
 const catchAsyncError = require("../middleware/catchAsyncError");
 const Product = require("../models/productModel");
-const ApiFeatures = require("../utils/apiFeatures");
-const ErrorHandler = require("../utils/errorHandler");
-
+const ApiFeatures = require("../utils/ApiFeatures");
+const ErrorHandler = require("../utils/ErrorHandler");
 
 //create product --Admin Route
 const createProduct = catchAsyncError(async (req, res, next) => {
@@ -12,14 +11,12 @@ const createProduct = catchAsyncError(async (req, res, next) => {
 
     res.status(201).json({
         success: true,
-        product
-    })
-
-})
+        product,
+    });
+});
 
 // get all product
 const getAllProducts = catchAsyncError(async (req, res) => {
-
     const resultPerPage = 12;
     const productCount = await Product.countDocuments();
 
@@ -28,7 +25,7 @@ const getAllProducts = catchAsyncError(async (req, res) => {
     const apiFeatures = new ApiFeatures(Product.find(), req.query)
         .search()
         .filter()
-        .pagination((resultPerPage));
+        .pagination(resultPerPage);
 
     // it should be clear
 
@@ -37,7 +34,7 @@ const getAllProducts = catchAsyncError(async (req, res) => {
     res.status(200).json({
         success: true,
         products,
-        productCount
+        productCount,
     });
 });
 // Get All Product (Admin)
@@ -52,22 +49,25 @@ const getAdminProducts = catchAsyncError(async (req, res, next) => {
 
 // Update Product --Admin
 const updateProduct = catchAsyncError(async (req, res, next) => {
-
     let product = Product.findById(req.params.id);
 
     if (!product) {
         return res.status(500).json({
             success: false,
             message: "Product not found",
-        })
+        });
     }
 
-    product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, useFindAndModify: false });
+    product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false,
+    });
 
     res.status(200).json({
         success: true,
-        product
-    })
+        product,
+    });
 });
 
 //Delete Product --Admin
@@ -75,24 +75,36 @@ const deleteProduct = catchAsyncError(async (req, res, next) => {
     const product = await Product.findById(req.params.id);
 
     if (!product) {
-
         return res.status(500).json({
             success: false,
             message: "Product not found",
-        })
-    };
+        });
+    }
     await product.remove();
 
     res.status(200).json({
         success: true,
         message: "Product Deleted Successfully!",
-    })
+    });
 });
 
+const addProduct = catchAsyncError(async (req, res, next) => {
+    const newDoctor = new Product(req.body);
+    newDoctor.save((err) => {
+        if (err) {
+            res.status(500).json({
+                error: "There was a server side error!",
+            });
+        } else {
+            res.status(200).json({
+                message: "Product inserted successfully!",
+            });
+        }
+    });
+});
 
 // get single product
 const getProductDetails = catchAsyncError(async (req, res, next) => {
-
     const product = await Product.findById(req.params.id);
 
     if (!product) {
@@ -102,54 +114,39 @@ const getProductDetails = catchAsyncError(async (req, res, next) => {
         //     success: false,
         //     message: "Product not found",
         // })
-    };
+    }
 
     res.status(200).json({
         success: true,
-        product
-    })
+        product,
+    });
 });
 
 // Create New Review or Update the review
 const createProductReview = catchAsyncError(async (req, res, next) => {
-    const { rating, comment, productId } = req.body;
-
-    const review = {
-        user: req.user._id,
-        name: req.user.name,
-        rating: Number(rating),
-        comment,
-    };
-
-    const product = await Product.findById(productId);
-
-    const isReviewed = product.reviews.find(
-        (rev) => rev.user.toString() === req.user._id.toString()
+    const review = req.body;
+    const data = await Product.find({ _id: req.params.id });
+    const reviews = data[0].reviews;
+    const newReviews = [...reviews, review];
+    const result = Product.findByIdAndUpdate(
+        { _id: req.params.id },
+        { reviews: newReviews },
+        {
+            new: true,
+            useFindAndModify: false,
+        },
+        (err) => {
+            if (err) {
+                res.status(500).json({
+                    error: "There was a server side error!",
+                });
+            } else {
+                res.status(200).json({
+                    message: "Doctor was updated successfully!",
+                });
+            }
+        }
     );
-
-    if (isReviewed) {
-        product.reviews.forEach((rev) => {
-            if (rev.user.toString() === req.user._id.toString())
-                (rev.rating = rating), (rev.comment = comment);
-        });
-    } else {
-        product.reviews.push(review);
-        product.numOfReviews = product.reviews.length;
-    }
-
-    let avg = 0;
-
-    product.reviews.forEach((rev) => {
-        avg += rev.rating;
-    });
-
-    product.ratings = avg / product.reviews.length;
-
-    await product.save({ validateBeforeSave: false });
-
-    res.status(200).json({
-        success: true,
-    });
 });
 
 // Get All Reviews of a product
@@ -222,5 +219,6 @@ module.exports = {
     deleteProduct,
     deleteReview,
     createProductReview,
-    updateProduct
-}
+    updateProduct,
+    addProduct,
+};

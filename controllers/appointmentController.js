@@ -1,15 +1,15 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const router = express.Router();
+// const mongoose = require("mongoose");
+// const router = express.Router();
 const catchAsyncError = require("../middleware/catchAsyncError");
-const Appointment = require("../models/appointmentModel");
-const ApiFeatures = require("../utils/apiFeatures");
-const ErrorHandler = require("../utils/errorHandler");
+const AppointmentsCollection = require("../models/appointmentModel");
+// const ApiFeatures = require("../utils/apiFeatures");
+// const ErrorHandler = require("../utils/errorHandler");
 
 // GET all appointment
 
 const getAllAppointment = catchAsyncError(async (req, res, next) => {
-    Appointment.find({})
+    AppointmentsCollection.find({})
         .select({
             __v: 0,
             date: 0,
@@ -26,30 +26,67 @@ const getAllAppointment = catchAsyncError(async (req, res, next) => {
                 });
             }
         });
-})
+});
 
+// user-appointments
+const getMyAppointments = catchAsyncError(async (req, res, next) => {
+    AppointmentsCollection.find({ patientEmail: req.params.email })
+        .select({
+            __v: 0,
+            date: 0,
+        })
+        .exec((err, data) => {
+            if (err) {
+                res.status(500).json({
+                    error: "There was a server side error!",
+                });
+            } else {
+                res.status(200).json({
+                    result: data,
+                    message: "Success",
+                });
+            }
+        });
+});
+
+// doctor-appointments
+const getDoctorAppointments = catchAsyncError(async (req, res, next) => {
+    // console.log(req.params.email);
+    const query = { "doctorInfo.email": req.params.email };
+    AppointmentsCollection.find(query).exec((err, data) => {
+        if (err) {
+            res.status(500).json({
+                error: "There was a server side error!",
+            });
+        } else {
+            res.status(200).json({
+                result: data,
+                message: "Success",
+            });
+        }
+    });
+});
 
 // GET A appointment by ID
 
 const getAppointmentById = catchAsyncError(async (req, res, next) => {
     try {
-        const data = await Appointment.find({ _id: req.params.id });
+        const data = await AppointmentsCollection.find({ _id: req.params.id });
         res.status(200).json({
             success: true,
-            data
+            data,
         });
     } catch (err) {
         res.status(500).json({
             error: "There was a server side error!",
         });
     }
-})
-
+});
 
 // POST An appointment
 
 const addAnAppointment = catchAsyncError(async (req, res, next) => {
-    const newAppointment = new Appointment(req.body);
+    const newAppointment = new AppointmentsCollection(req.body);
     newAppointment.save((err) => {
         if (err) {
             res.status(500).json({
@@ -61,13 +98,12 @@ const addAnAppointment = catchAsyncError(async (req, res, next) => {
             });
         }
     });
-})
-
+});
 
 // POST MULTIPLE Appointment
 
 const addMultipleAppointment = catchAsyncError(async (req, res, next) => {
-    Appointment.insertMany(req.body, (err) => {
+    AppointmentsCollection.insertMany(req.body, (err) => {
         if (err) {
             res.status(500).json({
                 error: "There was a server side error!",
@@ -78,13 +114,12 @@ const addMultipleAppointment = catchAsyncError(async (req, res, next) => {
             });
         }
     });
-})
-
+});
 
 // PUT Appointment
 
 const updateAppointment = catchAsyncError(async (req, res, next) => {
-    const result = Appointment.findByIdAndUpdate(
+    const result = AppointmentsCollection.findByIdAndUpdate(
         { _id: req.params.id },
         {
             $set: {
@@ -107,13 +142,12 @@ const updateAppointment = catchAsyncError(async (req, res, next) => {
             }
         }
     );
-})
-
+});
 
 // DELETE Appointment
 
 const deleteAppointment = catchAsyncError(async (req, res, next) => {
-    Appointment.deleteOne({ _id: req.params.id }, (err) => {
+    AppointmentsCollection.deleteOne({ _id: req.params.id }, (err) => {
         if (err) {
             res.status(500).json({
                 error: "There was a server side error!",
@@ -124,8 +158,7 @@ const deleteAppointment = catchAsyncError(async (req, res, next) => {
             });
         }
     });
-})
-
+});
 
 module.exports = {
     getAllAppointment,
@@ -134,4 +167,6 @@ module.exports = {
     deleteAppointment,
     addAnAppointment,
     addMultipleAppointment,
+    getMyAppointments,
+    getDoctorAppointments,
 };

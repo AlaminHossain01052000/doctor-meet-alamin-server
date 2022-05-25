@@ -1,6 +1,6 @@
 const Order = require("../models/orderModel");
 const Product = require("../models/productModel");
-const ErrorHandler = require("../utils/errorHandler");
+const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncErrors = require("../middleware/catchAsyncError");
 
 // Create new Order
@@ -86,7 +86,9 @@ const updateOrder = catchAsyncErrors(async (req, res, next) => {
     }
 
     if (order.orderStatus === "Delivered") {
-        return next(new ErrorHandler("You have already delivered this order", 400));
+        return next(
+            new ErrorHandler("You have already delivered this order", 400)
+        );
     }
 
     if (req.body.status === "Shipped") {
@@ -135,5 +137,5 @@ module.exports = {
     myOrders,
     deleteOrder,
     updateOrder,
-    getAllOrders
+    getAllOrders,
 };

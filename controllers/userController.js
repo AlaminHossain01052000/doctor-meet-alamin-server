@@ -1,17 +1,14 @@
-const ErrorHandler = require("../utils/errorHandler");
+const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const User = require("../models/userModel");
 const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
-const cloudinary = require("cloudinary");
-const bcrypt = require("bcryptjs");
-
+// const cloudinary = require("cloudinary");
 
 //Register user
 
 exports.registerUser = catchAsyncError(async (req, res, next) => {
-
     // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
     //     folder: "avatars",
     //     width: 150,
@@ -20,34 +17,12 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
 
     const { name, email, password, image, role } = req.body;
 
-    // try {
-
-    //     await sendEmail({
-    //         email: email,
-    //         subject: `Doctor Meet registration confirmation`,
-    //         message: "from Doctor Meet",
-    //     });
-
-    //     res.status(200).json({
-    //         success: true,
-    //         message: `Email sent to ${email} successfully`,
-    //     });
-    // } catch (error) {
-    //     user.resetPasswordToken = undefined;
-    //     user.resetPasswordExpire = undefined;
-    //     console.log(error);
-    //     // await user.save({ validateBeforeSave: false });
-
-    //     // return next(new ErrorHander(error.message, 500));
-    // }
-
-
     const user = await User.create({
         name,
         email,
         password,
         image,
-        role
+        role,
     });
 
     // generate token
@@ -55,10 +30,9 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
 
 });
 
-// login user 
+// login user
 
 exports.loginUser = catchAsyncError(async (req, res, next) => {
-
     const { email, password } = req.body;
 
     // checking if user has given password and email both
@@ -85,7 +59,6 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
 });
 
 exports.logout = catchAsyncError(async (req, res, next) => {
-
     // res.cookie("token", null, {
     //     expires: new Date(Date.now()),
     //     httpOnly: true
@@ -93,9 +66,8 @@ exports.logout = catchAsyncError(async (req, res, next) => {
 
     res.status(200).cookie("token", null).json({
         success: true,
-        message: "Logged out!"
-    })
-
+        message: "Logged out!",
+    });
 });
 
 // Forgot Password
@@ -273,23 +245,71 @@ exports.getSingleUser = catchAsyncError(async (req, res, next) => {
     });
 });
 
-// update User Role -- Admin
-exports.updateUserRole = catchAsyncError(async (req, res, next) => {
-    const newUserData = {
-        name: req.body.name,
-        email: req.body.email,
-        role: req.body.role,
-    };
-
-    await User.findByIdAndUpdate(req.params.id, newUserData, {
-        new: true,
-        runValidators: true,
-        useFindAndModify: false,
-    });
+exports.getUserByRole = catchAsyncError(async (req, res, next) => {
+    const user = await User.find({ role: req.query.role });
+    if (!user) {
+        return next(
+            new ErrorHandler(
+                `User does not exist with email: ${req.query.role}`
+            )
+        );
+    }
 
     res.status(200).json({
         success: true,
+        user,
     });
+});
+
+// update User Role -- Admin
+
+exports.updateUserRole = catchAsyncError(async (req, res, next) => {
+    const Role = req.body;
+    const result = User.findByIdAndUpdate(
+        { _id: req.params.id },
+        { role: Role.role },
+        {
+            new: true,
+            useFindAndModify: false,
+        },
+        (err) => {
+            if (err) {
+                res.status(500).json({
+                    error: "There was a server side error!",
+                });
+            } else {
+                res.status(200).json({
+                    message: "role was updated successfully!",
+                });
+            }
+        }
+    );
+});
+
+exports.SendNotification = catchAsyncError(async (req, res, next) => {
+    const notify = req.body;
+    const data = await User.find({ _id: req.params.id });
+    const notifys = data[0].notification;
+    const newNotify = [...notifys, notify];
+    const result = User.findByIdAndUpdate(
+        { _id: req.params.id },
+        { notification: newNotify },
+        {
+            new: true,
+            useFindAndModify: false,
+        },
+        (err) => {
+            if (err) {
+                res.status(500).json({
+                    error: "There was a server side error!",
+                });
+            } else {
+                res.status(200).json({
+                    message: "Doctor was updated successfully!",
+                });
+            }
+        }
+    );
 });
 
 // Delete User --Admin
@@ -298,7 +318,10 @@ exports.deleteUser = catchAsyncError(async (req, res, next) => {
 
     if (!user) {
         return next(
-            new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 400)
+            new ErrorHandler(
+                `User does not exist with Id: ${req.params.id}`,
+                400
+            )
         );
     }
 

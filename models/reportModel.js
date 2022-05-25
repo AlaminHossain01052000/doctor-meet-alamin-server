@@ -2,24 +2,29 @@ const mongoose = require("mongoose");
 
 const reportSchema = mongoose.Schema(
     {
-        name: {
+        drName: {
             type: String,
-            required: true,
         },
-        DrName: {
+        drEmail: {
             type: String,
-            required: true,
         },
-        email: {
+        file: {
             type: String,
-            required: true,
         },
-        img: {
+        patientName: {
             type: String,
-            required: true,
+        },
+        patientEmail: {
+            type: String,
         },
         desc: {
             type: String,
+        },
+        review: {
+            type: String,
+        },
+        status: {
+            type: Boolean,
         },
     },
     { timestamps: true }

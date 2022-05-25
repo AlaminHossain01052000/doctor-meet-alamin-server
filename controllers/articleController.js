@@ -1,10 +1,10 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const router = express.Router();
+// const mongoose = require("mongoose");
+// const router = express.Router();
 const catchAsyncError = require("../middleware/catchAsyncError");
 const Articles = require("../models/articleModel");
-const ApiFeatures = require("../utils/apiFeatures");
-const ErrorHandler = require("../utils/errorHandler");
+// const ApiFeatures = require("../utils/apiFeatures");
+// const ErrorHandler = require("../utils/errorHandler");
 
 // GET All by donor
 const allArticles = catchAsyncError(async (req, res, next) => {
@@ -21,6 +21,19 @@ const allArticles = catchAsyncError(async (req, res, next) => {
             error: "Not found any results.",
         });
     }
+});
+
+const getSingleArticle = catchAsyncError(async (req, res, next) => {
+    const Article = await Articles.find({ _id: req.params.id });
+
+    if (!Article) {
+        return next(new ErrorHandler("Articles not found with this Id", 404));
+    }
+
+    res.status(200).json({
+        success: true,
+        Article,
+    });
 });
 
 // POST A Review
@@ -42,4 +55,5 @@ const addArticle = catchAsyncError(async (req, res, next) => {
 module.exports = {
     addArticle,
     allArticles,
+    getSingleArticle,
 };
