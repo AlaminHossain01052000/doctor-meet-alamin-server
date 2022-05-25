@@ -2,7 +2,7 @@
   "name": "doctor-meet-server-final",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "compilerOptions": {
     "target": "es5"
   },
