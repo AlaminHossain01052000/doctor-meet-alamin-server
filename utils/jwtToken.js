@@ -15,17 +15,17 @@ const sendToken = (user, statusCode, res) => {
     //     options.secure = true;
     // }
     // res.cookie("jwt", token, options)
+    res.status(statusCode).cookie("token", token).json({
+        success: true,
+        user,
+        token,
+    });
+
     // res.status(statusCode).json({
     //     success: true,
     //     user,
     //     token,
     // });
-
-    res.status(statusCode).json({
-        success: true,
-        user,
-        token,
-    });
 };
 
 module.exports = sendToken;
