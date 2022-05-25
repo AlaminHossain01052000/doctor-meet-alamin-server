@@ -1,11 +1,10 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const router = express.Router();
+// const express = require("express");
+// const mongoose = require("mongoose");
+// const router = express.Router();
 const catchAsyncError = require("../middleware/catchAsyncError");
 const DonorCollection = require("../models/donorModel");
-const ApiFeatures = require("../utils/apiFeatures");
-const ErrorHandler = require("../utils/errorHandler");
-
+// const ApiFeatures = require("../utils/apiFeatures");
+// const ErrorHandler = require("../utils/errorHandler");
 
 // GET All by donor
 const getAllDonors = catchAsyncError(async (req, res, next) => {
@@ -42,7 +41,6 @@ const getAllDonors = catchAsyncError(async (req, res, next) => {
             error: "Donor not found.",
         });
     }
-
 });
 
 // GET specific donor by ID
@@ -52,7 +50,7 @@ const getDonorById = catchAsyncError(async (req, res, next) => {
         const donor = await DonorCollection.find({ _id: req.params.id });
         res.status(200).json({
             success: true,
-            donor
+            donor,
         });
     } catch (err) {
         res.status(500).json({
@@ -88,9 +86,7 @@ const getDonorStats = catchAsyncError(async (req, res, next) => {
             error: "There was a server side error!",
         });
     }
-
 });
-
 
 // post donor information
 
@@ -107,7 +103,7 @@ const addADonor = catchAsyncError(async (req, res, next) => {
             });
         }
     });
-})
+});
 
 // update donor information
 
@@ -132,7 +128,7 @@ const updateDonorDetails = catchAsyncError(async (req, res, next) => {
             }
         }
     );
-})
+});
 
 // DELETE Donor information
 const deleteDonorData = catchAsyncError(async (req, res, next) => {
@@ -147,7 +143,7 @@ const deleteDonorData = catchAsyncError(async (req, res, next) => {
             });
         }
     });
-})
+});
 
 module.exports = {
     getAllDonors,
@@ -155,5 +151,5 @@ module.exports = {
     addADonor,
     updateDonorDetails,
     deleteDonorData,
-    getDonorStats
+    getDonorStats,
 };
