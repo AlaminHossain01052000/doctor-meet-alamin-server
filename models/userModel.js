@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        default: "avatar"
+        default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLhYhRYXrrS3OGaE4hCHZCQh99kuca9aBHCg&usqp=CAU"
     },
     // image: {
     //     // public_id: String,
