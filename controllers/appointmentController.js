@@ -1,10 +1,10 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const router = express.Router();
+// const mongoose = require("mongoose");
+// const router = express.Router();
 const catchAsyncError = require("../middleware/catchAsyncError");
 const AppointmentsCollection = require("../models/appointmentModel");
-const ApiFeatures = require("../utils/apiFeatures");
-const ErrorHandler = require("../utils/errorHandler");
+// const ApiFeatures = require("../utils/apiFeatures");
+// const ErrorHandler = require("../utils/errorHandler");
 
 // GET all appointment
 

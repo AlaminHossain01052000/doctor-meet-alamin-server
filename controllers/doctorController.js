@@ -1,13 +1,13 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const { ObjectId } = require("mongodb");
+// const express = require("express");
+// const mongoose = require("mongoose");
+// const { ObjectId } = require("mongodb");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const DoctorsCollection = require("../models/doctorModel");
 const UsersCollection = require("../models/userModel");
-const router = express.Router();
-const ApiFeatures = require("../utils/apiFeatures");
-const ErrorHandler = require("../utils/errorHandler");
-const User = require("../models/userModel");
+// const router = express.Router();
+// const ApiFeatures = require("../utils/apiFeatures");
+// const ErrorHandler = require("../utils/errorHandler");
+// const User = require("../models/userModel");
 
 // GET All by doctor
 const getAllDoctors = catchAsyncError(async (req, res, next) => {
