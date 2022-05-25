@@ -1,9 +1,11 @@
 const app = require("./app");
+const product=require('./api/product');
 const cloudinary = require("cloudinary");
 const dotenv = require('dotenv');
 const connectionDatabase = require("./config/database")
 dotenv.config();
 
+app.use("/api/product",product);
 //handling uncaught Exception
 process.on("uncaughtException", (err) => {
     console.log(`Error: ${err.message}`);
